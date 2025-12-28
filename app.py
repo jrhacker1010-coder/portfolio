@@ -15,7 +15,7 @@ st.markdown("""
 .hero { text-align: center; padding: 2rem; }
 .hero h1 { font-size: 3rem; background: linear-gradient(45deg, #00ff88, #00aaff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .section { margin: 2rem 0; }
-.skill { background: #2a2a2a; padding: 0.5rem 1rem; margin: 0.25rem; border-radius: 20px; display: inline-block; }
+.skill { background: #2a2a2a; color: #00ff88; padding: 0.5rem 1rem; margin: 0.25rem; border-radius: 20px; display: inline-block; }
 .project { background: #1a1a1a; padding: 1.5rem; margin: 1rem 0; border-radius: 10px; }
 </style>
 """, unsafe_allow_html=True)
