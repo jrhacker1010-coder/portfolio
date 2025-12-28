@@ -31,6 +31,7 @@ user_input = st.sidebar.text_input("Ask me anything about my portfolio")
 # =============================
 # CHATBOT LOGIC
 # =============================
+
 if user_input:
     system_prompt = """
 You are an AI assistant for Harsh's portfolio website.
@@ -44,28 +45,30 @@ ONLY answer questions related to:
 Profile:
 Name: Harsh
 Role: AI Full Stack Developer
-Education: B.Tech Information Technology (2nd Year)
+Education: B.Tech IT (2nd Year)
 Skills: HTML, CSS, JavaScript, Python, Flask, AI APIs
-Projects:
-- AI Resume Builder
-- To-Do List Web App
-- AI-Powered Portfolio Website
+Projects: AI Resume Builder, To-Do App, Portfolio Website
 
 If the question is unrelated, politely redirect to portfolio topics.
 """
 
-    completion = client.chat.completions.create(
-        model="llama3-8b-8192",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_input}
-        ],
-        temperature=0.4
-    )
+    if not user_input.strip():
+        st.warning("Please ask something about my portfolio 😊")
+    else:
+        completion = client.chat.completions.create(
+            model="llama3-8b-8192",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_input}
+            ],
+            temperature=0.4,
+            max_tokens=512
+        )
 
-    reply = completion.choices[0].message.content
-    st.session_state.chat_history.append(("You", user_input))
-    st.session_state.chat_history.append(("AI", reply))
+        reply = completion.choices[0].message.content
+        st.session_state.chat_history.append(("You", user_input))
+        st.session_state.chat_history.append(("AI", reply))
+
 
 # =============================
 # MAIN PAGE (PORTFOLIO)
@@ -138,5 +141,6 @@ for role, msg in st.session_state.chat_history:
         st.markdown(f"**🧑 You:** {msg}")
     else:
         st.markdown(f"**🤖 AI:** {msg}")
+
 
 
