@@ -1,82 +1,139 @@
-import os
 import streamlit as st
+import os
 from groq import Groq
-from dotenv import load_dotenv
 
-load_dotenv()
-client = Groq(api_key=os.getenv('GROQ_API_KEY'))
+# =============================
+# PAGE CONFIG
+# =============================
+st.set_page_config(
+    page_title="Harsh | AI Full Stack Developer",
+    page_icon="🤖",
+    layout="wide"
+)
 
-if 'messages' not in st.session_state:
-    st.session_state.messages = []
+# =============================
+# GROQ CLIENT
+# =============================
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
+# =============================
+# SIDEBAR
+# =============================
+st.sidebar.title("🤖 AI Portfolio Chatbot")
+st.sidebar.write("Ask about my skills, projects, or education")
+
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+
+user_input = st.sidebar.text_input("Ask me anything about my portfolio")
+
+# =============================
+# CHATBOT LOGIC
+# =============================
+if user_input:
+    system_prompt = """
+You are an AI assistant for Harsh's portfolio website.
+
+ONLY answer questions related to:
+- Harsh's education
+- Harsh's skills
+- Harsh's projects
+- Harsh as an AI Full Stack Developer
+
+Profile:
+Name: Harsh
+Role: AI Full Stack Developer
+Education: B.Tech Information Technology (2nd Year)
+Skills: HTML, CSS, JavaScript, Python, Flask, AI APIs
+Projects:
+- AI Resume Builder
+- To-Do List Web App
+- AI-Powered Portfolio Website
+
+If the question is unrelated, politely redirect to portfolio topics.
+"""
+
+    completion = client.chat.completions.create(
+        model="llama3-8b-8192",
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_input}
+        ],
+        temperature=0.4
+    )
+
+    reply = completion.choices[0].message.content
+    st.session_state.chat_history.append(("You", user_input))
+    st.session_state.chat_history.append(("AI", reply))
+
+# =============================
+# MAIN PAGE (PORTFOLIO)
+# =============================
 st.markdown("""
-<style>
-.stApp { background: #0f0f0f; color: white; }
-.hero { text-align: center; padding: 2rem; }
-.hero h1 { font-size: 3rem; background: linear-gradient(45deg, #00ff88, #00aaff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.section { margin: 2rem 0; }
-.skill { background: #2a2a2a; color: #00ff88; padding: 0.5rem 1rem; margin: 0.25rem; border-radius: 20px; display: inline-block; }
-.project { background: #1a1a1a; padding: 1.5rem; margin: 1rem 0; border-radius: 10px; }
-</style>
-""", unsafe_allow_html=True)
+# 👋 Hi, I'm Harsh  
+### AI Full Stack Developer | 2nd Year B.Tech IT Student
 
-# Hero Section
-st.markdown("""
-<div class="hero">
-    <h1>Harsh</h1>
-    <p>AI Full Stack Developer | 2nd Year B.Tech IT Student</p>
-</div>
-""", unsafe_allow_html=True)
+I build **full-stack web applications** with **AI-powered features**  
+using modern tools and APIs.
+""")
 
-# About Section
-st.markdown('<div class="section"><h2>About Me</h2><p>Passionate AI Full Stack Developer with focus on building intelligent web applications and scalable systems.</p></div>', unsafe_allow_html=True)
+st.markdown("---")
 
-# Skills Section
-st.markdown('<div class="section"><h2>Skills</h2>', unsafe_allow_html=True)
-skills = ["HTML", "CSS", "JavaScript", "Python", "Flask", "AI APIs"]
-for skill in skills:
-    st.markdown(f'<span class="skill">{skill}</span>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
+# =============================
+# ABOUT
+# =============================
+st.header("📌 About Me")
+st.write("""
+I am a second-year Information Technology student passionate about
+building scalable web applications and integrating AI into real-world systems.
+""")
 
-# Projects Section
-st.markdown('<div class="section"><h2>Projects</h2>', unsafe_allow_html=True)
-projects = [
-    "AI Resume Builder - AI-powered resume creation tool",
-    "To-Do List Web App - Modern task management application", 
-    "AI-Powered Portfolio Website - Dynamic portfolio with AI chatbot"
+# =============================
+# SKILLS
+# =============================
+st.header("🛠 Skills")
+cols = st.columns(3)
+skills = [
+    "HTML", "CSS", "JavaScript",
+    "Python", "Flask", "AI APIs",
+    "Full Stack Development"
 ]
-for project in projects:
-    st.markdown(f'<div class="project">{project}</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
 
-# Chatbot Section
-st.markdown('<div class="section"><h2>AI Assistant</h2>', unsafe_allow_html=True)
+for i, skill in enumerate(skills):
+    cols[i % 3].success(skill)
 
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+# =============================
+# PROJECTS
+# =============================
+st.header("🚀 Projects")
 
-if prompt := st.chat_input("Ask about Harsh's skills, projects, or background"):
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
+st.subheader("AI Resume Builder")
+st.write("A web app that generates professional resumes using AI.")
 
-    try:
-        system_prompt = """You are Harsh's portfolio assistant. Only answer about Harsh, his skills (HTML, CSS, JavaScript, Python, Flask, AI APIs), projects (AI Resume Builder, To-Do List Web App, Portfolio Website), and background. Redirect unrelated questions."""
-        
-        response = client.chat.completions.create(
-            model="llama3-8b-8192",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.4
-        )
-        
-        reply = response.choices[0].message.content
-        st.session_state.messages.append({"role": "assistant", "content": reply})
-        with st.chat_message("assistant"):
-            st.markdown(reply)
-            
-    except Exception as e:
-        st.error(f"Error: {str(e)}")
+st.subheader("To-Do List Web App")
+st.write("Task management app using JavaScript and localStorage.")
+
+st.subheader("AI-Powered Portfolio Website")
+st.write("This portfolio itself includes an AI chatbot using Groq API.")
+
+# =============================
+# CONTACT
+# =============================
+st.header("📬 Contact")
+st.write("""
+📧 Email: harsh@email.com  
+🔗 GitHub: https://github.com/yourusername  
+🔗 LinkedIn: https://linkedin.com/in/yourusername
+""")
+
+# =============================
+# CHAT HISTORY DISPLAY
+# =============================
+st.markdown("---")
+st.header("💬 Chatbot Conversation")
+
+for role, msg in st.session_state.chat_history:
+    if role == "You":
+        st.markdown(f"**🧑 You:** {msg}")
+    else:
+        st.markdown(f"**🤖 AI:** {msg}")
