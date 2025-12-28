@@ -2,38 +2,12 @@ import streamlit as st
 import os
 from groq import Groq
 
-# =============================
-# PAGE CONFIG
-# =============================
-st.set_page_config(
-    page_title="Harsh | AI Full Stack Developer",
-    page_icon="🤖",
-    layout="wide"
-)
+st.set_page_config(page_title="Harsh | AI Portfolio", layout="wide")
 
-# =============================
-# GROQ CLIENT
-# =============================
-
+# Initialize Groq client
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-# =============================
-# SIDEBAR
-# =============================
-st.sidebar.title("🤖 AI Portfolio Chatbot")
-st.sidebar.write("Ask about my skills, projects, or education")
-
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
-
-user_input = st.sidebar.text_input("Ask me anything about my portfolio")
-
-# =============================
-# CHATBOT LOGIC
-# =============================
-
-if user_input:
-    system_prompt = """
+SYSTEM_PROMPT = """
 You are an AI assistant for Harsh's portfolio website.
 
 ONLY answer questions related to:
@@ -47,100 +21,51 @@ Name: Harsh
 Role: AI Full Stack Developer
 Education: B.Tech IT (2nd Year)
 Skills: HTML, CSS, JavaScript, Python, Flask, AI APIs
-Projects: AI Resume Builder, To-Do App, Portfolio Website
+Projects:
+- AI Resume Builder
+- To-Do List Web App
+- Portfolio Website
 
-If the question is unrelated, politely redirect to portfolio topics.
+If the user asks anything unrelated, politely redirect them.
 """
 
-    if not user_input.strip():
-        st.warning("Please ask something about my portfolio 😊")
-    else:
+# Chat history
+if "chat" not in st.session_state:
+    st.session_state.chat = []
+
+st.sidebar.title("🤖 Portfolio Chatbot")
+user_input = st.sidebar.text_input("Ask about my portfolio")
+
+# MAIN UI
+st.title("👋 Hi, I'm Harsh")
+st.subheader("AI Full Stack Developer | 2nd Year B.Tech IT")
+
+st.write("This is my portfolio with a Groq-powered AI chatbot.")
+
+# CHATBOT LOGIC
+if user_input and user_input.strip():
+    try:
         completion = client.chat.completions.create(
             model="llama3-8b-8192",
             messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_input}
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_input.strip()}
             ],
             temperature=0.4,
             max_tokens=512
         )
 
         reply = completion.choices[0].message.content
-        st.session_state.chat_history.append(("You", user_input))
-        st.session_state.chat_history.append(("AI", reply))
+        st.session_state.chat.append(("You", user_input))
+        st.session_state.chat.append(("AI", reply))
 
+    except Exception as e:
+        st.error("Groq API error. Please try again.")
+        st.stop()
 
-# =============================
-# MAIN PAGE (PORTFOLIO)
-# =============================
-st.markdown("""
-# 👋 Hi, I'm Harsh  
-### AI Full Stack Developer | 2nd Year B.Tech IT Student
-
-I build **full-stack web applications** with **AI-powered features**  
-using modern tools and APIs.
-""")
-
-st.markdown("---")
-
-# =============================
-# ABOUT
-# =============================
-st.header("📌 About Me")
-st.write("""
-I am a second-year Information Technology student passionate about
-building scalable web applications and integrating AI into real-world systems.
-""")
-
-# =============================
-# SKILLS
-# =============================
-st.header("🛠 Skills")
-cols = st.columns(3)
-skills = [
-    "HTML", "CSS", "JavaScript",
-    "Python", "Flask", "AI APIs",
-    "Full Stack Development"
-]
-
-for i, skill in enumerate(skills):
-    cols[i % 3].success(skill)
-
-# =============================
-# PROJECTS
-# =============================
-st.header("🚀 Projects")
-
-st.subheader("AI Resume Builder")
-st.write("A web app that generates professional resumes using AI.")
-
-st.subheader("To-Do List Web App")
-st.write("Task management app using JavaScript and localStorage.")
-
-st.subheader("AI-Powered Portfolio Website")
-st.write("This portfolio itself includes an AI chatbot using Groq API.")
-
-# =============================
-# CONTACT
-# =============================
-st.header("📬 Contact")
-st.write("""
-📧 Email: harsh@email.com  
-🔗 GitHub: https://github.com/yourusername  
-🔗 LinkedIn: https://linkedin.com/in/yourusername
-""")
-
-# =============================
-# CHAT HISTORY DISPLAY
-# =============================
-st.markdown("---")
-st.header("💬 Chatbot Conversation")
-
-for role, msg in st.session_state.chat_history:
+# DISPLAY CHAT
+for role, msg in st.session_state.chat:
     if role == "You":
         st.markdown(f"**🧑 You:** {msg}")
     else:
         st.markdown(f"**🤖 AI:** {msg}")
-
-
-
