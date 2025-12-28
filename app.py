@@ -1,71 +1,160 @@
 import streamlit as st
-import os
-from groq import Groq
 
-st.set_page_config(page_title="Harsh | AI Portfolio", layout="wide")
+# =============================
+# PAGE CONFIG
+# =============================
+st.set_page_config(
+    page_title="Harsh | AI Full Stack Developer",
+    page_icon="⚡",
+    layout="wide",
+)
 
-# Initialize Groq client
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+# =============================
+# CUSTOM CSS (PREMIUM UI)
+# =============================
+st.markdown("""
+<style>
+body {
+    background-color: #0b0f19;
+}
+.main-title {
+    font-size: 60px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #6366f1, #22d3ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.subtitle {
+    font-size: 22px;
+    color: #c7d2fe;
+}
+.card {
+    background: rgba(255,255,255,0.05);
+    padding: 25px;
+    border-radius: 16px;
+    box-shadow: 0 0 30px rgba(99,102,241,0.15);
+}
+.skill {
+    display: inline-block;
+    background: linear-gradient(135deg, #4f46e5, #06b6d4);
+    padding: 10px 16px;
+    margin: 6px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+.project-card {
+    background: rgba(255,255,255,0.04);
+    padding: 20px;
+    border-radius: 14px;
+    border-left: 4px solid #6366f1;
+}
+.footer {
+    text-align: center;
+    color: #94a3b8;
+    padding: 30px;
+}
+</style>
+""", unsafe_allow_html=True)
 
-SYSTEM_PROMPT = """
-You are an AI assistant for Harsh's portfolio website.
+# =============================
+# HERO SECTION
+# =============================
+st.markdown("<div class='main-title'>Harsh</div>", unsafe_allow_html=True)
+st.markdown("<div class='subtitle'>AI Full Stack Developer · 2nd Year B.Tech IT</div>", unsafe_allow_html=True)
 
-ONLY answer questions related to:
-- Harsh's education
-- Harsh's skills
-- Harsh's projects
-- Harsh as an AI Full Stack Developer
+st.write("""
+I design and build **scalable full-stack applications** with a strong focus on  
+**clean UI, performance, and AI integration**.
+""")
 
-Profile:
-Name: Harsh
-Role: AI Full Stack Developer
-Education: B.Tech IT (2nd Year)
-Skills: HTML, CSS, JavaScript, Python, Flask, AI APIs
-Projects:
-- AI Resume Builder
-- To-Do List Web App
-- Portfolio Website
+st.markdown("---")
 
-If the user asks anything unrelated, politely redirect them.
-"""
+# =============================
+# ABOUT ME
+# =============================
+st.header("🧠 About Me")
 
-# Chat history
-if "chat" not in st.session_state:
-    st.session_state.chat = []
+st.markdown("""
+<div class="card">
+I am a second-year Information Technology student passionate about building
+modern web applications and intelligent systems.  
+I enjoy turning ideas into **real-world digital products** using clean
+architecture and modern development practices.
+</div>
+""", unsafe_allow_html=True)
 
-st.sidebar.title("🤖 Portfolio Chatbot")
-user_input = st.sidebar.text_input("Ask about my portfolio")
+# =============================
+# SKILLS
+# =============================
+st.header("🛠 Technical Skills")
 
-# MAIN UI
-st.title("👋 Hi, I'm Harsh")
-st.subheader("AI Full Stack Developer | 2nd Year B.Tech IT")
+skills = [
+    "HTML", "CSS", "JavaScript",
+    "Python", "Flask", "Streamlit",
+    "AI APIs", "Full Stack Development",
+    "Git & GitHub"
+]
 
-st.write("This is my portfolio with a Groq-powered AI chatbot.")
+st.markdown("<div class='card'>", unsafe_allow_html=True)
+for skill in skills:
+    st.markdown(f"<span class='skill'>{skill}</span>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
-# CHATBOT LOGIC
-if user_input and user_input.strip():
-    try:
-        completion = client.chat.completions.create(
-            model="llama3-8b-8192",
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user", "content": user_input.strip()}
-            ],
-            temperature=0.4,
-            max_tokens=512
-        )
+# =============================
+# PROJECTS
+# =============================
+st.header("🚀 Featured Projects")
 
-        reply = completion.choices[0].message.content
-        st.session_state.chat.append(("You", user_input))
-        st.session_state.chat.append(("AI", reply))
+projects = [
+    ("AI Resume Builder",
+     "An AI-powered web application that generates professional resumes dynamically."),
+    
+    ("To-Do List Web App",
+     "A clean and efficient task management application with persistent storage."),
+    
+    ("AI-Powered Portfolio Website",
+     "A modern portfolio platform showcasing skills, projects, and professional profile.")
+]
 
-    except Exception as e:
-        st.error("Groq API error. Please try again.")
-        st.stop()
+for title, desc in projects:
+    st.markdown(f"""
+    <div class="project-card">
+        <h3>{title}</h3>
+        <p>{desc}</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-# DISPLAY CHAT
-for role, msg in st.session_state.chat:
-    if role == "You":
-        st.markdown(f"**🧑 You:** {msg}")
-    else:
-        st.markdown(f"**🤖 AI:** {msg}")
+# =============================
+# EDUCATION
+# =============================
+st.header("🎓 Education")
+
+st.markdown("""
+<div class="card">
+<b>B.Tech – Information Technology</b><br>
+2nd Year Undergraduate Student<br>
+Focus: Software Engineering & AI Systems
+</div>
+""", unsafe_allow_html=True)
+
+# =============================
+# CONTACT
+# =============================
+st.header("📬 Contact")
+
+st.markdown("""
+<div class="card">
+📧 Email: harsh@email.com<br>
+🔗 GitHub: https://github.com/yourusername<br>
+🔗 LinkedIn: https://linkedin.com/in/yourusername
+</div>
+""", unsafe_allow_html=True)
+
+# =============================
+# FOOTER
+# =============================
+st.markdown("""
+<div class="footer">
+© 2025 Harsh · Built with Streamlit · Premium Portfolio
+</div>
+""", unsafe_allow_html=True)
