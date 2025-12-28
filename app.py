@@ -14,7 +14,8 @@ st.set_page_config(
 # =============================
 # GROQ CLIENT
 # =============================
-client = Groq(api_key=os.getenv("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"))
+
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 # =============================
 # SIDEBAR
@@ -137,4 +138,5 @@ for role, msg in st.session_state.chat_history:
         st.markdown(f"**🧑 You:** {msg}")
     else:
         st.markdown(f"**🤖 AI:** {msg}")
+
 
