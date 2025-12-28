@@ -4,7 +4,7 @@ import streamlit as st
 # PAGE CONFIG
 # =============================
 st.set_page_config(
-    page_title="Harsh | AI Full Stack Developer",
+    page_title="Harshanth | AI Full Stack Developer",
     page_icon="⚡",
     layout="wide",
 )
@@ -145,8 +145,8 @@ st.header("📬 Contact")
 st.markdown("""
 <div class="card">
 📧 Email: harsh@email.com<br>
-🔗 GitHub: https://github.com/yourusername<br>
-🔗 LinkedIn: https://linkedin.com/in/yourusername
+🔗 GitHub: https://github.com/<br>
+🔗 LinkedIn: https://linkedin.com/in/
 </div>
 """, unsafe_allow_html=True)
 
@@ -155,6 +155,7 @@ st.markdown("""
 # =============================
 st.markdown("""
 <div class="footer">
-© 2025 Harsh · Built with Streamlit · Premium Portfolio
+© 2025 Harshanth ·current status 
 </div>
 """, unsafe_allow_html=True)
+
