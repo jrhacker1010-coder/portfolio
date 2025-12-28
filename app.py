@@ -59,7 +59,7 @@ body {
 # =============================
 # HERO SECTION
 # =============================
-st.markdown("<div class='main-title'>Harsh</div>", unsafe_allow_html=True)
+st.markdown("<div class='main-title'>Harshanth</div>", unsafe_allow_html=True)
 st.markdown("<div class='subtitle'>AI Full Stack Developer · 2nd Year B.Tech IT</div>", unsafe_allow_html=True)
 
 st.write("""
@@ -158,4 +158,5 @@ st.markdown("""
 © 2025 Harshanth ·current status 
 </div>
 """, unsafe_allow_html=True)
+
 
